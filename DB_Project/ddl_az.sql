@@ -1,3 +1,6 @@
+ALTER SESSION SET NLS_DATE_FORMAT = 'MM-DD-YYYY';
+  
+  
 CREATE TABLE SKILL(
     SK_SkillCode int,
     SK_Level varchar(20),
@@ -59,34 +62,67 @@ INSERT INTO SKILL_REQUIRED VALUES(4, 2210);
 INSERT INTO SKILL_REQUIRED VALUES(4, 2410);
 INSERT INTO SKILL_REQUIRED VALUES(4, 2512);
 
-
-CREATE TABLE INVENTORY(
-    I_InventoryID int,
-    I_ShelfCode int,
-    I_Title varchar(20),
-    I_Description varchar(100),
-    I_AvgCost int,
-    I_ItemNum int,
-    I_Unit varchar(10),
-    
-    PRIMARY KEY(I_InventoryID)
-);
-
-INSERT INTO INVENTORY VALUES(1, 1000, 'MAIN INVENTORY', 'Pellentesque habitant morbi tristique.', 30000, 100, 'PK');
-
 CREATE TABLE STORE(
     ST_StoreID int,
-    ST_InventoryID int,
     ST_Address varchar(100),
     ST_Phone_Number varchar(20),
     ST_Zip_Code varchar(20),
     
-    PRIMARY KEY(ST_StoreID),
-    FOREIGN KEY(ST_InventoryID) REFERENCES INVENTORY(I_InventoryID)
+    PRIMARY KEY(ST_StoreID)
 );
 
-INSERT INTO STORE VALUES(1, 1, '250 New Orleans Ave, New Orleans, LA', '504-444-222', '70522');
-INSERT INTO STORE VALUES(2, 1, '250 New York Ave, New York, NY', '222-124-322', '44522');
+INSERT INTO STORE VALUES(1, '250 New Orleans Ave, New Orleans, LA', '504-444-222', '70522');
+INSERT INTO STORE VALUES(2, '440 New York Ave, New York, NY', '222-124-322', '44522');
+
+CREATE TABLE SUPPLIER(
+    SU_SupplierID int,
+    SU_Name varchar(20),
+    SU_Address varchar(100),
+
+    PRIMARY KEY(SU_SupplierID)
+);
+
+INSERT INTO SUPPLIER VALUES (1, 'Tires 100%', '122 Wood Creek St');
+INSERT INTO SUPPLIER VALUES (2, 'Best Windows', '2 Red Rd');
+
+CREATE TABLE PURCHASE(
+    P_PurchaseNum varchar(5),
+    P_ItemNum varchar(6),
+    P_SupplierID int,
+    P_Date date,
+    P_Quantity int,
+    P_Price int,
+    P_Note varchar(100),
+    
+    PRIMARY KEY(P_PurchaseNum),
+    FOREIGN KEY(P_SupplierID) REFERENCES SUPPLIER(SU_SupplierID)
+);
+
+INSERT INTO PURCHASE VALUES('P0001', 'IT1000', 1, TO_DATE('04/05/2017'), 100, 400, 'Purchase Note.');
+INSERT INTO PURCHASE VALUES('P0002', 'IT1001', 1, TO_DATE('03/25/2018'), 80, 350, 'Purchase Note.');
+INSERT INTO PURCHASE VALUES('P0003', 'IT1002', 1, TO_DATE('02/11/2016'), 120, 280, 'Purchase Note.');
+INSERT INTO PURCHASE VALUES('P0004', 'IT1004', 1, TO_DATE('01/19/2016'), 150, 75, 'Purchase Note.');
+
+CREATE TABLE INVENTORY(
+    I_ItemNum varchar(6),
+    I_StoreID int,
+    I_ShelfCode int,
+    I_Title varchar(20),
+    I_Description varchar(100),
+    I_AvgCost int,
+    I_Unit varchar(10),
+    I_MinLevel int,
+    I_ItemQuantity int,
+    I_ItemPrice int,
+    
+    PRIMARY KEY(I_ItemNum),
+    FOREIGN KEY(I_StoreID) REFERENCES STORE(ST_StoreID)
+);
+
+INSERT INTO INVENTORY VALUES('IT1000', 1, 1000, 'Tire', 'Pellentesque habitant morbi tristique.', 266, 'EA', 20, 30, 400);
+INSERT INTO INVENTORY VALUES('IT1001', 1, 1001, 'Window', 'Pellentesque habitant morbi tristique.', 266, 'EA', 10, 8, 350);
+INSERT INTO INVENTORY VALUES('IT1002', 1, 1002, 'Plastic Bump', 'Pellentesque habitant morbi tristique.', 266, 'EA', 15, 14, 280);
+INSERT INTO INVENTORY VALUES('IT1004', 1, 1003, 'Interior Light', 'Pellentesque habitant morbi tristique.', 266, 'EA', 50, 52, 75);
 
 CREATE TABLE EMPLOYEE(
     E_EmployeeID int,
@@ -142,61 +178,48 @@ INSERT INTO CUSTOMER VALUES(3, 'Garcia', 'Wilson', '504-311-122');
 INSERT INTO CUSTOMER VALUES(4, 'Thomas', 'Edson', '504-117-922');
 INSERT INTO CUSTOMER VALUES(5, 'David', 'Miller', '504-181-882');
 
-
-CREATE TABLE SUPPLIER(
-    SU_SupplierID int,
-    SU_Name varchar(20),
-    SU_Address varchar(100),
-
-    PRIMARY KEY(SU_SupplierID)
-);
-
-INSERT INTO SUPPLIER VALUES (1, 'Tires 100%', '122 Wood Creek St');
-INSERT INTO SUPPLIER VALUES (2, 'Best Windows', '2 Red Rd');
-
-
 CREATE TABLE SALES(
-    SA_InvoiceNum int,
-    SA_InventoryID int,
+    SA_InvoiceNum varchar(4),
     SA_CustomerID int,
-    SA_ItemNum int,
+    SA_ItemNum varchar(6),
     SA_Date date,
     SA_Quantity int,
-    SA_Price int,
+    SA_Price number,
     SA_Note varchar(100),
     
     PRIMARY KEY(SA_InvoiceNum),
-    FOREIGN KEY(SA_InventoryID) REFERENCES INVENTORY(I_InventoryID),
+    FOREIGN KEY(SA_ItemNum) REFERENCES INVENTORY(I_ItemNum),
     FOREIGN KEY(SA_CustomerID) REFERENCES CUSTOMER(C_CustomerID)
 );
 
-CREATE TABLE PURCHASE(
-    P_PurchaseNum int,
-    P_InventoryID int,
-    P_SupplierID int,
-    P_ItemNum int,
-    P_Date date,
-    P_Quantity int,
-    P_Price int,
-    P_Note varchar(100),
-    
-    PRIMARY KEY(P_PurchaseNum),
-    FOREIGN KEY(P_InventoryID) REFERENCES INVENTORY(I_InventoryID),
-    FOREIGN KEY(P_SupplierID) REFERENCES SUPPLIER(SU_SupplierID)
-);
+--2019 to 2021
+INSERT INTO SALES VALUES('S001', 1, 'IT1000', TO_DATE('01/05/2020'), 5, 2000, 'This is a note');
+INSERT INTO SALES VALUES('S002', 2, 'IT1001', TO_DATE('01/05/2020'), 1, 350, 'This is a note');
+INSERT INTO SALES VALUES('S003', 2, 'IT1000', TO_DATE('06/12/2020'), 2, 800, 'This is a note');
+INSERT INTO SALES VALUES('S004', 3, 'IT1004', TO_DATE('03/17/2019'), 7, 525, 'This is a note');
+INSERT INTO SALES VALUES('S005', 4, 'IT1000', TO_DATE('01/05/2020'), 1, 400, 'This is a note');
+INSERT INTO SALES VALUES('S006', 4, 'IT1001', TO_DATE('04/08/2021'), 3, 1050, 'This is a note');
+INSERT INTO SALES VALUES('S007', 5, 'IT1002', TO_DATE('02/28/2020'), 2, 560, 'This is a note');
+--2018
+INSERT INTO SALES VALUES('S008', 5, 'IT1000', TO_DATE('03/01/2018'), 1, 400, 'This is a note');
+INSERT INTO SALES VALUES('S009', 5, 'IT1000', TO_DATE('03/21/2018'), 4, 1600, 'This is a note');
+INSERT INTO SALES VALUES('S010', 5, 'IT1001', TO_DATE('04/27/2018'), 7, 2450, 'This is a note');
+INSERT INTO SALES VALUES('S011', 5, 'IT1001', TO_DATE('01/12/2018'), 3, 1050, 'This is a note');
+INSERT INTO SALES VALUES('S012', 5, 'IT1002', TO_DATE('11/04/2018'), 5, 1400, 'This is a note');
+INSERT INTO SALES VALUES('S013', 5, 'IT1002', TO_DATE('12/15/2018'), 6, 1680, 'This is a note');
+INSERT INTO SALES VALUES('S014', 5, 'IT1004', TO_DATE('08/23/2018'), 4, 300, 'This is a note');
+INSERT INTO SALES VALUES('S015', 5, 'IT1004', TO_DATE('06/28/2018'), 3, 225, 'This is a note');
 
 DROP TABLE PURCHASE;
 DROP TABLE SALES;
 DROP TABLE SUPPLIER;
 DROP TABLE CUSTOMER;
 DROP TABLE EMPLOYEE;
-DROP TABLE STORE;
 DROP TABLE INVENTORY;
+DROP TABLE STORE;
 DROP TABLE SKILL_REQUIRED;
 DROP TABLE POSITION;
 DROP TABLE SKILL;
-
-
 
 
 
