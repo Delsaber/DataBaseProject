@@ -73,14 +73,6 @@ WHERE
 GROUP BY COMPANY.gid
 ORDER BY COMPANY.gid ASC;
 
---19. Given a person’s identifier and a PositionCode, find the courses (course id and title) that
---each alone teaches all the missing skills for this person to be qualified for the specified
---position, assuming the skill gap of the worker and the requirement of the position can be
---covered by one course.
-
-
-
-
 
 
 
