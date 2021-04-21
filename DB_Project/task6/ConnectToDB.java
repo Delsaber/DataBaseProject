@@ -2,12 +2,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 
-public class CreateState {
+public class ConnectToDB {
 
     private Connection conn;
     private Statement state;
     
-    public CreateState(){
+    public ConnectToDB(){
 
         try{
             System.out.println("creating");

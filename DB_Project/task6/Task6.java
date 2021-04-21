@@ -3,7 +3,7 @@ import java.sql.Statement;
 public class Task6 {
     public static void main(String[] args){
         try{
-            CreateState ct = new CreateState();
+            ConnectToDB ct = new ConnectToDB();
             Statement state = ct.getState();
             
             Employee e = new Employee(state);
