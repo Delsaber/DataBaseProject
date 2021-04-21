@@ -1,5 +1,3 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -29,7 +27,8 @@ public class Employee {
         String email,
         String address,
         String phoneNumber,
-        String zipCode
+        String zipCode,
+        Statement state
         ){
         
         this.id = id;
@@ -43,11 +42,11 @@ public class Employee {
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.zipCode = zipCode;
-        this.state = new CreateState().getState();
+        this.state = state;
     }
 
-    public Employee(){
-        this.state = new CreateState().getState();
+    public Employee(Statement state){
+        this.state = state;
     }
 
     public Statement getState(){

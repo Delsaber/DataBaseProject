@@ -1,16 +1,19 @@
+import java.sql.Statement;
+
 public class Task6 {
     public static void main(String[] args){
         try{
-
-            Employee e = new Employee();
-            Employee ee = new Employee();
+            CreateState ct = new CreateState();
+            Statement state = ct.getState();
+            
+            Employee e = new Employee(state);
+            Employee ee = new Employee(state);
             
             e.insert();
             ee.insert();
 
-            new CreateState().closeConnection();
-			
-		} 
+            ct.closeConnection();
+		}
 		catch(Exception e){
 			System.out.println(e);
 		}
