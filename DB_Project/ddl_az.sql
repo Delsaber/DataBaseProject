@@ -153,7 +153,6 @@ CREATE TABLE EMPLOYEE(
     FOREIGN KEY(E_PositionID) REFERENCES POSITION(P_PositionID)
 );
 
-
 INSERT INTO EMPLOYEE VALUES (1, 1, 1, 'Luan', 'Ferrari', 80000, 'Male', 'luan@gmail.com', '99 Wood St', '504-111-111', '70222');
 INSERT INTO EMPLOYEE VALUES (2, 1, 1, 'Ashley', 'Alvarez', 90000, 'Female', 'ashley@gmail.com', '1144 Pine St', '504-111-111', '70211');
 INSERT INTO EMPLOYEE VALUES (3, 1, 1, 'Ricardo', 'Derick', 110000, 'Male', 'ricardo@gmail.com', '22 Tree St', '504-111-111', '70422');
