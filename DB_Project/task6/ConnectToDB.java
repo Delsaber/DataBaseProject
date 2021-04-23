@@ -30,7 +30,7 @@ public class ConnectToDB {
     public void closeConnection(){
         try{
             conn.close();
-            System.out.println("Connection to DB Closed!");
+            System.out.println("\nConnection to DB Closed!\n");
         }catch(Exception e){
             e.printStackTrace();
         }

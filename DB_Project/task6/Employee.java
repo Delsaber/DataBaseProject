@@ -57,6 +57,37 @@ public class Employee {
         return this.conn;
     }
 
+    public void insertToDB(
+        int id, int storeId, int positionID, String fName, String lName, int salary, String gender,
+        String email, String address, String phoneNumber, String zipCode
+        ){
+
+        try{
+            String sql = "INSERT INTO EMPLOYEE VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            this.ps = this.conn.prepareStatement(sql);
+            this.ps.setInt(1, id);
+            this.ps.setInt(2, storeId);
+            this.ps.setInt(3, positionId);
+            this.ps.setString(4, fName);
+            this.ps.setString(5, lName);
+            this.ps.setInt(6, salary);
+            this.ps.setString(7, gender);
+            this.ps.setString(8, email);
+            this.ps.setString(9, address);
+            this.ps.setString(10, phoneNumber);
+            this.ps.setString(11, zipCode);
+
+            this.ps.execute();
+            this.ps.close();
+            
+            System.out.println("\n***Employee Inserted\n");
+            
+        }catch(Exception e){
+			System.out.println(e);
+		}
+    }
+
     public void insertToDB(){
         try{
             String sql = "INSERT INTO EMPLOYEE VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -84,11 +115,28 @@ public class Employee {
 		}
     }
 
+    public void deleteFromDB(){
+        try{
+
+            String sql = "DELETE FROM EMPLOYEE WHERE E_EmployeeID = ?";
+            this.ps = this.conn.prepareStatement(sql);
+            this.ps.setInt(1, this.id);
+            this.ps.execute();
+            this.ps.close();
+
+            System.out.println("\n***Employee Deleted\n");
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public void deleteFromDB(int id){
         try{
 
-            String sql = String.format("DELETE FROM EMPLOYEE WHERE E_EmployeeID = %s", id);
+            String sql = "DELETE FROM EMPLOYEE WHERE E_EmployeeID = ?";
             this.ps = this.conn.prepareStatement(sql);
+            this.ps.setInt(1, id);
             this.ps.execute();
             this.ps.close();
 

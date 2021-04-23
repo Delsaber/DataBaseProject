@@ -2,33 +2,28 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Connection;
 
-public class Customer {
+public class SkillRequired {
 
-    private int id;
-    private String fName; 
-    private String lName; 
-    private String phoneNumber;
+    private int positionId;
+    private int skillCode; 
     private Connection conn;
     private PreparedStatement ps;
 
-    public Customer(
-        int id, 
-        String fName, 
-        String lName, 
-        String phoneNumber,
+    public SkillRequired(
+        int positionId, 
+        int skillCode,
         Connection conn
         ){
         
-        this.id = id;
-        this.fName = fName;
-        this.lName = lName;
-        this.phoneNumber = phoneNumber;
+        this.positionId = positionId;
+        this.skillCode = skillCode;
+
         this.conn = conn;
 
         insertToDB();
     }
 
-    public Customer(Connection conn){
+    public SkillRequired(Connection conn){
         this.conn = conn;
     }
 
@@ -36,20 +31,18 @@ public class Customer {
         return this.conn;
     }
 
-    public void insertToDB(int id, String fName, String lName, String phoneNumber){
+    public void insertToDB(int positionId, int skillCode){
         try{
-            String sql = "INSERT INTO CUSTOMER VALUES(?, ?, ?, ?)";
+            String sql = "INSERT INTO SKILL_REQUIRED VALUES(?, ?)";
 
             this.ps = this.conn.prepareStatement(sql);
-            this.ps.setInt(1, id);
-            this.ps.setString(2, fName);
-            this.ps.setString(3, lName);
-            this.ps.setString(4, phoneNumber);
+            this.ps.setInt(1, positionId);
+            this.ps.setInt(2, skillCode);
 
             this.ps.execute();
             this.ps.close();
             
-            System.out.println("\n***Customer Inserted!\n");
+            System.out.printf("\n***New SKILL_REQUIRED Inserted For Position: %d!\n", this.positionId);
             
         }catch(Exception e){
 			System.out.println(e);
@@ -58,18 +51,16 @@ public class Customer {
 
     public void insertToDB(){
         try{
-            String sql = "INSERT INTO CUSTOMER VALUES(?, ?, ?, ?)";
+            String sql = "INSERT INTO SKILL_REQUIRED VALUES(?, ?)";
 
             this.ps = this.conn.prepareStatement(sql);
-            this.ps.setInt(1, this.id);
-            this.ps.setString(2, this.fName);
-            this.ps.setString(3, this.lName);
-            this.ps.setString(4, this.phoneNumber);
+            this.ps.setInt(1, this.positionId);
+            this.ps.setInt(2, this.skillCode);
 
             this.ps.execute();
             this.ps.close();
             
-            System.out.println("\n***Customer Inserted!\n");
+            System.out.printf("\n***New SKILL_REQUIRED Inserted For Position: %d!\n", this.positionId);
             
         }catch(Exception e){
 			System.out.println(e);
@@ -79,41 +70,43 @@ public class Customer {
     public void deleteFromDB(){
         try{
 
-            String sql = "DELETE FROM CUSTOMER WHERE C_CustomerID = ?";
+            String sql = "DELETE FROM SKILL_REQUIRED WHERE SR_PositionID = ? AND SR_SkillCode = ?";
             this.ps = this.conn.prepareStatement(sql);
-            this.ps.setInt(1, this.id);
+            this.ps.setInt(1, this.positionId);
+            this.ps.setInt(2, this.skillCode);
             this.ps.execute();
             this.ps.close();
 
-            System.out.println("\n***Employee Deleted\n");
+            System.out.printf("\n***SKILL_REQUIRED: %d for Position: %d DELETED! \n", this.skillCode, this.positionId);
 
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    public void deleteFromDB(int id){
+    public void deleteFromDB(int positionId, int skillCode){
         try{
 
-            String sql = "DELETE FROM CUSTOMER WHERE C_CustomerID = ?";
+            String sql = "DELETE FROM SKILL_REQUIRED WHERE SR_PositionID = ? AND SR_SkillCode = ?";
             this.ps = this.conn.prepareStatement(sql);
-            this.ps.setInt(1, id);
+            this.ps.setInt(1, positionId);
+            this.ps.setInt(2, skillCode);
             this.ps.execute();
             this.ps.close();
 
-            System.out.println("\n***Customer Deleted\n");
+            System.out.printf("\n***SKILL_REQUIRED: %d for Position: %d DELETED! \n", this.skillCode, this.positionId);
 
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    public ResultSet getAllCustomers(){
+    public ResultSet getAllSkillRequired(){
 
         ResultSet result = null;
 
         try{
-            String sql = "SELECT * FROM CUSTOMER";
+            String sql = "SELECT * FROM SKILL_REQUIRED";
             this.ps = this.conn.prepareStatement(sql);
             result = ps.executeQuery();
 
