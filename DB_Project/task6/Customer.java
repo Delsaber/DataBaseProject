@@ -2,54 +2,33 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Connection;
 
-public class Employee {
+public class Customer {
 
     private int id;
-    private int storeId;
-    private int positionId; 
     private String fName; 
     private String lName; 
-    private int salary;
-    private String gender;
-    private String email;
-    private String address;
     private String phoneNumber;
-    private String zipCode;
     private Connection conn;
     private PreparedStatement ps;
 
-    public Employee(
+    public Customer(
         int id, 
-        int storeId, 
-        int positionId, 
         String fName, 
         String lName, 
-        int salary, 
-        String gender,
-        String email,
-        String address,
         String phoneNumber,
-        String zipCode,
         Connection conn
         ){
         
         this.id = id;
-        this.storeId = storeId;
-        this.positionId = positionId;
         this.fName = fName;
         this.lName = lName;
-        this.salary = salary;
-        this.gender = gender;
-        this.email = email;
-        this.address = address;
         this.phoneNumber = phoneNumber;
-        this.zipCode = zipCode;
         this.conn = conn;
 
         insertToDB();
     }
 
-    public Employee(Connection conn){
+    public Customer(Connection conn){
         this.conn = conn;
     }
 
@@ -59,25 +38,18 @@ public class Employee {
 
     public void insertToDB(){
         try{
-            String sql = "INSERT INTO EMPLOYEE VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Customer VALUES(?, ?, ?, ?)";
 
             this.ps = this.conn.prepareStatement(sql);
             this.ps.setInt(1, this.id);
-            this.ps.setInt(2, this.storeId);
-            this.ps.setInt(3, this.positionId);
-            this.ps.setString(4, this.fName);
-            this.ps.setString(5, this.lName);
-            this.ps.setInt(6, this.salary);
-            this.ps.setString(7, this.gender);
-            this.ps.setString(8, this.email);
-            this.ps.setString(9, this.address);
-            this.ps.setString(10, this.phoneNumber);
-            this.ps.setString(11, this.zipCode);
+            this.ps.setString(2, this.fName);
+            this.ps.setString(3, this.lName);
+            this.ps.setString(4, this.phoneNumber);
 
             this.ps.execute();
             this.ps.close();
             
-            System.out.println("\n***Employee Inserted\n");
+            System.out.println("\n***Customer Inserted!\n");
             
         }catch(Exception e){
 			System.out.println(e);
@@ -87,24 +59,24 @@ public class Employee {
     public void deleteFromDB(int id){
         try{
 
-            String sql = String.format("DELETE FROM EMPLOYEE WHERE E_EmployeeID = %s", id);
+            String sql = String.format("DELETE FROM Customer WHERE C_CustomerID = %s", id);
             this.ps = this.conn.prepareStatement(sql);
             this.ps.execute();
             this.ps.close();
 
-            System.out.println("\n***Employee Deleted\n");
+            System.out.println("\n***Customer Deleted\n");
 
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    public ResultSet getAllEmployees(){
+    public ResultSet getAllCustomers(){
 
         ResultSet result = null;
 
         try{
-            String sql = "SELECT * FROM EMPLOYEE";
+            String sql = "SELECT * FROM Customer";
             this.ps = this.conn.prepareStatement(sql);
             result = ps.executeQuery();
 

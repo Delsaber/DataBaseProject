@@ -5,33 +5,32 @@ import java.sql.Statement;
 public class ConnectToDB {
 
     private Connection conn;
-    private Statement state;
     
     public ConnectToDB(){
 
         try{
-            System.out.println("creating");
+            System.out.println("Connecting to DB...");
             //Step 2 Load the driver class
             Class.forName("oracle.jdbc.driver.OracleDriver");
             
             //Step 3 Create the connection object
-            conn = DriverManager.getConnection("jdbc:oracle:thin:@dbsvcs.cs.uno.edu:1521:orcl", "lgcencir", "grdKCMd4");
+            this.conn = DriverManager.getConnection("jdbc:oracle:thin:@dbsvcs.cs.uno.edu:1521:orcl", "lgcencir", "grdKCMd4");
 
-            //Step 4 Create the Statement Object
-            state = conn.createStatement();
+            System.out.println("Connected to DB!");
 
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    public Statement getState(){
-        return state;
+    public Connection getConn(){
+        return this.conn;
     }
 
     public void closeConnection(){
         try{
             conn.close();
+            System.out.println("Connection to DB Closed!");
         }catch(Exception e){
             e.printStackTrace();
         }
