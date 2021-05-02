@@ -1,6 +1,7 @@
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Connection;
+import java.sql.Statement;
 
 public class Position {
 
@@ -13,7 +14,6 @@ public class Position {
     private PreparedStatement ps;
 
     public Position(
-        int id, 
         String title, 
         String description, 
         int payRangeLow,
@@ -21,18 +21,34 @@ public class Position {
         Connection conn
         ){
         
-        this.id = id;
+        this.conn = conn;
+        this.id = getId();
         this.title = title;
         this.description = description;
         this.payRangeLow = payRangeLow;
         this.payRangeHigh = payRangeHigh;
-        this.conn = conn;
-
+        
         insertToDB();
     }
 
     public Position(Connection conn){
         this.conn = conn;
+    }
+
+    public int getId(){
+        int maxId = 0;
+        try{
+            Statement state = getConn().createStatement();
+            ResultSet result = state.executeQuery("SELECT count(*) from POSITION");
+            while(result.next()){
+            maxId = (result.getInt(1));
+        }
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
+
+        return maxId += 1;
     }
 
     public Connection getConn(){
@@ -89,7 +105,7 @@ public class Position {
             this.ps.execute();
             this.ps.close();
 
-            System.out.println("\n***Employee Deleted\n");
+            System.out.println("\n***Position Deleted\n");
 
         }catch(Exception e){
             e.printStackTrace();

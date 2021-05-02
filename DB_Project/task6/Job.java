@@ -8,11 +8,11 @@ public class Job{
         this.conn = con;
     }
 
-    public void insertJob(int jobid,int skillcode, ){
+    public void insertJob(int skillcode){
         Random rand = new Random();
        int max = getMaxRow();
        try{
-        String sql = "INSERT INTO jobs VALUES("+max+", "+max+", "+ +")";
+        String sql = "INSERT INTO jobs VALUES("+(max+1)+", "+(max+1)+", "+skillcode+")";
 
            conn.prepareStatement(sql);
        }

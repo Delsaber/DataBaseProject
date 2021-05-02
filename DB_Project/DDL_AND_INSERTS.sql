@@ -217,11 +217,6 @@ INSERT INTO section VALUES (25,'1009',500);
 INSERT INTO section VALUES (26,'1009',500);
 INSERT INTO section VALUES (27,'1009',500);
 
-INSERT INTO takes values(1,1004,11,'05/21/2021');
-INSERT INTO takes values(1,1005,13,'05/21/2021');
-INSERT INTO takes values(2,1004,11,'05/21/2021');
-INSERT INTO takes values(2,1005,13,'05/21/2021');
-
 INSERT INTO gics VALUES (1, 'healthcare', NULL);
 INSERT INTO gics VALUES (110, 'medical', '1');
 INSERT INTO gics VALUES (120, 'rehab', '1');

@@ -26,7 +26,10 @@ public class Task6 {
             * Get All Employees in the Database
             * Close Prepared Statement of Customer After done with Result Set
             */
-            e = new Employee(17, 1, 3, "Luis", "Cenci", 110000, "Male", "luisgcenci@gmail.com", "Nickel Loop St", "504-499-555", "70458", conn);
+            e = new Employee(1, 3, "Luis", "Cenci", 110000, "Male", "luisgcenci@gmail.com", "Nickel Loop St", "504-499-555", "70458", conn);
+            
+            System.out.println(e.getId());
+
             result = e.getAllEmployees();
             while(result.next()){
                 System.out.println(result.getInt(1) + "," + result.getString(4) + " " + result.getString(5));
@@ -57,11 +60,12 @@ public class Task6 {
             * Get All Customers in the Database
             * Close Prepared Statement of Customer After done with Result Set
             */
-            c = new Customer(6, "Luis", "Cenci", "504-499-555", conn);
+            c = new Customer("Luis", "Cenci", "504-499-555", conn);
             result = c.getAllCustomers();
             while(result.next()){
                 System.out.println(result.getInt(1) + "," + result.getString(2) + " " + result.getString(3));
             }
+
             c.closePs();
 
             c.deleteFromDB();
@@ -87,7 +91,7 @@ public class Task6 {
             * Get All Positions in the Database
             * Close Prepared Statement of Position After done with Result Set
             */
-            p = new Position(5, "Back-end Developer", "Pellentesque habitant morbi tristique.", 65000, 95000, conn);
+            p = new Position("Back-end Developer", "Pellentesque habitant morbi tristique.", 65000, 95000, conn);
             result = p.getAllPositions();
             while(result.next()){
                 System.out.println(result.getInt(1) + "," + result.getString(2) + ":" + result.getString(3));

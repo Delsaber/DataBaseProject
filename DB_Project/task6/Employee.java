@@ -1,6 +1,7 @@
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Connection;
+import java.sql.Statement;
 
 public class Employee {
 
@@ -19,7 +20,6 @@ public class Employee {
     private PreparedStatement ps;
 
     public Employee(
-        int id, 
         int storeId, 
         int positionId, 
         String fName, 
@@ -33,7 +33,8 @@ public class Employee {
         Connection conn
         ){
         
-        this.id = id;
+        this.conn = conn;
+        this.id = getId();
         this.storeId = storeId;
         this.positionId = positionId;
         this.fName = fName;
@@ -44,7 +45,6 @@ public class Employee {
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.zipCode = zipCode;
-        this.conn = conn;
 
         insertToDB();
     }
@@ -55,6 +55,22 @@ public class Employee {
 
     public Connection getConn(){
         return this.conn;
+    }
+    
+    public int getId(){
+        int maxId = 0;
+        try{
+            Statement state = getConn().createStatement();
+            ResultSet result = state.executeQuery("SELECT count(*) from EMPLOYEE");
+            while(result.next()){
+            maxId = (result.getInt(1));
+        }
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
+
+        return maxId += 1;
     }
 
     public void insertToDB(
