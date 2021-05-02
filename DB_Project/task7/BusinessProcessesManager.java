@@ -39,9 +39,9 @@ public class BusinessProcessesManager {
                     case(2):
                         break;
                     case(3):
+                        new Process3().main(null);
                         break;
                     case(4):
-                        new Test().main(null);
                         break;
                     case(5):
                         break;
