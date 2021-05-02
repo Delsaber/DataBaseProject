@@ -8,65 +8,13 @@ public class Process3 {
     public static void main(String[] args){
         
         //Connect to Databse
-        ConnectToDBAZ az = new ConnectToDBAZ();
         ConnectToDBGV gv = new ConnectToDBGV();
 
         //Get DBs Connections
-        Connection connAz = az.getConn();
         Connection connGv = gv.getConn();
 
         try{
             connGv.setAutoCommit(false);
-
-            // /** DELETE CONTRACT AND SELECT ALL CONTRACTS */
-            // String contractCode     = "00005";
-            // String sql              = "DELETE FROM CONTRACT WHERE ContractID = ?";
-            // PreparedStatement ps    = connGv.prepareStatement(sql);
-            // ps.setString(1, contractCode);
-            // ps.execute();
-
-            // String sql                     = "SELECT * FROM CONTRACT";
-            // PreparedStatement ps           = connGv.prepareStatement(sql);
-            // ResultSet result = ps.executeQuery();
-
-            // while (result.next()){
-            //     System.out.println(
-            //         result.getString(1) + ", " + 
-            //         result.getString(2) + ", " + 
-            //         result.getString(3) + ", " +
-            //         result.getInt(4)    + ", " + 
-            //         result.getString(5) + ", " + 
-            //         result.getString(6) + ", " +
-            //         result.getInt(7)
-            //     );
-            // }
-            // System.out.println();
-
-            // // /** DELETE PURCHASE AND SELECT ALL PURCHASES  */
-            // // String supplier = "Exchange Market";
-            // // sql             = "DELETE FROM PURCHASE WHERE SupplierID = ?";
-            // // ps              = connGv.prepareStatement(sql);
-            // // ps.setString(1, supplier);
-            // // ps.execute();
-
-            // sql      = "SELECT * FROM PURCHASE";
-            // ps       = connGv.prepareStatement(sql);
-            // result   = ps.executeQuery();
-
-            // while (result.next()){
-            //     System.out.println(
-            //         result.getInt(1)    + ", " + 
-            //         result.getString(2) + ", " + 
-            //         result.getInt(3)    + ", " +
-            //         result.getString(4) + ", " + 
-            //         result.getString(5) + ", " + 
-            //         result.getString(6) + ", " +
-            //         result.getString(7) + ", " +
-            //         result.getString(8)
-            //     );
-            // }
-            // System.out.println();
-
 
             /** EM BUYS $100 million worth of products from GV */
 
@@ -147,7 +95,6 @@ public class Process3 {
 
             //Close DBs Connections
             connGv.commit();
-            az.closeConnection();
             gv.closeConnection();
         
         }catch (Exception e){

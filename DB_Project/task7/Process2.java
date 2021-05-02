@@ -14,22 +14,20 @@ class Process2{
 		String name = "";
 		PreparedStatement ps;
 		Scanner scan = new Scanner(System.in);
+
+		//Connect to Databse
+		ConnectToDBGV gv = new ConnectToDBGV();
+
+		//Get DBs Connections
+		Connection conn = gv.getConn();
 		
 		try{
-			//Step 2 Load the driver class
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			
-			//Step 3 Create the connection object
-			Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@dbsvcs.cs.uno.edu:1521:orcl", "rjgaray", "VrHX7Ngg"); //Change these to your user/pass
 
-			//Step 4 Create the Statement Object
-			Statement state = conn.createStatement();
-			
-			System.out.println("Enter Factory ID of Factory Transferring Worker\n");
+			System.out.print("\nEnter Factory ID of Factory Transferring Worker: ");
 			factory_t = scan.nextLine();
-			System.out.println("Enter Factory ID of Factory Receiving Worker\n");
+			System.out.print("\nEnter Factory ID of Factory Receiving Worker: ");
 			factory_r = scan.nextLine();
-			System.out.println("Enter Worker ID\n");
+			System.out.print("\nEnter Worker ID : ");
 			worker = scan.nextLine();
 						
 			String sql = "SELECT Name_W FROM Worker WHERE FactoryID_W = ? AND WorkerID = ?";
@@ -66,26 +64,17 @@ class Process2{
 					ps.setString(3, name);
 					ps.executeQuery();
 					
-					System.out.println("Worker Transferred.");
+					System.out.println("\n***Worker Transferred.");
 				} else
-					System.out.println("No such factory exists to transfer this employee to.");
+					System.out.println("\n***No such factory exists to transfer this employee to.");
 				
 			} else
-				System.out.println("No such employee works at that factory.");
+				System.out.println("\n***No such employee works at that factory.");
 			//Step 6 Close the Database Connection
-			sql = "SELECT * FROM WORKER";
-			ps = conn.prepareStatement(sql);
-			result = ps.executeQuery();
-			
-//			while(result.next()){
-//                System.out.println(result.getString(1) + "," + result.getString(2) + " " + result.getString(3));
-//            }
-			
-			conn.close();
+			gv.closeConnection();
 		} 
 		catch(Exception e){
 			System.out.println(e);
 		}
-		scan.close();
 	}	
 }

@@ -4,9 +4,9 @@ import java.sql.Statement;
 import java.util.*;
 
 public class BusinessProcessesManager {
-    public static void main(String[] args){
 
-        Scanner sc = new Scanner(System.in);
+    public static Scanner sc = new Scanner(System.in);
+    public static void main(String[] args){
 
         try{
 
@@ -37,11 +37,13 @@ public class BusinessProcessesManager {
                     case(1):
                         break;
                     case(2):
+                        new Process2().main(null);
                         break;
                     case(3):
                         new Process3().main(null);
                         break;
                     case(4):
+                        new Process4().main(null);
                         break;
                     case(5):
                         break;
@@ -55,6 +57,8 @@ public class BusinessProcessesManager {
                 }
             }
 
+            //close scanner
+            sc.close();
             //Close DB Connection
             ct.closeConnection();
 		}
