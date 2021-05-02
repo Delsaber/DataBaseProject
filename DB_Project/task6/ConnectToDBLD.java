@@ -14,7 +14,7 @@ public class ConnectToDB {
             Class.forName("oracle.jdbc.driver.OracleDriver");
             
             //Step 3 Create the connection object
-            this.conn = DriverManager.getConnection("jdbc:oracle:thin:@dbsvcs.cs.uno.edu:1521:orcl", "lgcencir", "grdKCMd4");
+            this.conn = DriverManager.getConnection("jdbc:oracle:thin:@dbsvcs.cs.uno.edu:1521:orcl", "ttngu105", "Motherfer123");
 
             System.out.println("Connected to DB!");
 
