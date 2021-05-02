@@ -94,7 +94,7 @@ CREATE TABLE CONTRACT(
 );
 
 
-CREATE TABLE PURCHASEX(
+CREATE TABLE PURCHASE(
     PurchaseNum int,
     SupplierID varchar(20),
     SupplierOrderNum int,
