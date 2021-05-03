@@ -7,6 +7,7 @@ public class Test {
         //Connect to Databse
         ConnectToDBAZ az = new ConnectToDBAZ();
         ConnectToDBGV gv = new ConnectToDBGV();
+        ConnectToDBLD ld = new ConnectToDBLD();
 
 
         //Get DBs Connections

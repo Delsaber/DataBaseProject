@@ -108,10 +108,9 @@ create table takes
     (
     peid number (3),
     coursecode number (4),
-    sectcode number(3),
     completed varchar(10) check (completed like '%%/%%/%%%%'),
     constraint persfk FOREIGN key (peid) references person(personid));
-    
+     
 
 INSERT INTO skills VALUES (1,'support');
 INSERT INTO skills VALUES (2,'sales');
@@ -216,11 +215,6 @@ INSERT INTO section VALUES (24,'1008',300);
 INSERT INTO section VALUES (25,'1009',500);
 INSERT INTO section VALUES (26,'1009',500);
 INSERT INTO section VALUES (27,'1009',500);
-
-INSERT INTO takes values(1,1004,11,'05/21/2021');
-INSERT INTO takes values(1,1005,13,'05/21/2021');
-INSERT INTO takes values(2,1004,11,'05/21/2021');
-INSERT INTO takes values(2,1005,13,'05/21/2021');
 
 INSERT INTO gics VALUES (1, 'healthcare', NULL);
 INSERT INTO gics VALUES (110, 'medical', '1');
@@ -619,6 +613,7 @@ INSERT INTO company VALUES (63, 'Grand Family Dentistry', 'Mandeville, LA', '1',
 INSERT INTO company VALUES (64, 'Ernest N. Morial Convention Center', 'New Orleans, LA', '2', '220', 'https://www.indeed.com/rc/clk?jk=7a0074fbf25a929b&fccid=ada99f53cdd1f9cd');
 INSERT INTO company VALUES (65, 'The Lynd Company', 'New Orleans, LA', '9', '930', 'https://www.indeed.com/rc/clk?jk=c215dae41f5c3204&fccid=a6273440d811796a');
 INSERT INTO company VALUES (66, 'PosiGen, LLC', 'Jefferson, LA 70121', '10', '1020', 'https://www.indeed.com/rc/clk?jk=d4fdb9499f53ddc4&fccid=a19e8da745403832');
+INSERT INTO company VALUES (67, 'AZ','New Orelans','11','111','www.az.com');
 INSERT INTO jobs VALUES (1, 1, 7, 1, 'full time');
 INSERT INTO jobs VALUES (2, 2, 7, 2, 'full time');
 INSERT INTO jobs VALUES (3, 3, 7, 3, 'full time');
