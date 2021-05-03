@@ -1,3 +1,4 @@
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -5,8 +6,16 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.util.*;
 
-public class Process5{
-public static void main(String args[]) {
+class Process5T implements Runnable{
+	
+	private Thread t;
+	
+	Process5T()
+	{
+		System.out.println("Creating Process5 Thread.");
+	}
+	
+	public void run() {
 		ArrayList<String> GV_ids = new ArrayList<String>();
 		ArrayList<String> LDG_ids = new ArrayList<String>();
 		ArrayList<Integer> AZ_ids = new ArrayList<Integer>();
@@ -243,5 +252,21 @@ public static void main(String args[]) {
 			
 		}
 		//System.out.println("Process5 Ending.");
-	}	
+	}
+	
+	public void start () {
+	      System.out.println("Starting Process5");
+	      if (t == null) {
+	         t = new Thread (this, "Process5");
+	         t.start ();
+	      }
+	   }
+}
+
+public class Process5 {
+	
+	public static void main(String args[]) {
+		Process5T P5 = new Process5T();
+		P5.start();
+	}
 }
