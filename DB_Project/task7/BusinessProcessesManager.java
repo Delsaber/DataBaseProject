@@ -2,23 +2,29 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.*;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class BusinessProcessesManager {
+
+    public static Scanner sc                            = new Scanner(System.in);
+    public static LinkedBlockingQueue<String> threadChat      = new LinkedBlockingQueue<>();
+
     public static void main(String[] args){
 
-        Scanner sc = new Scanner(System.in);
-
-        try{
+        try{ 
 
             //Connect to Databse
-            ConnectToDBAZ ct = new ConnectToDBAZ();
+            ConnectToDBAZ ct                = new ConnectToDBAZ();
 
             //Get Connection
-            Connection conn = ct.getConn();
+            Connection conn                 = ct.getConn();
 
             //loop control
-            int optionChosen = 0;
-            boolean quit     = false;
+            int optionChosen                = 0;
+            boolean quit                    = false;
+
+            //p5 thread boolean handler
+            boolean p5ThreadStarted = false;
 
             while (!quit){
                 System.out.println("\n-----------------------------------------------------------------------");
@@ -37,13 +43,21 @@ public class BusinessProcessesManager {
                     case(1):
                         break;
                     case(2):
+                        new Process2().main(null);
                         break;
                     case(3):
+                        new Process3().main(null);
                         break;
                     case(4):
-                        new Test().main(null);
+                        new Process4().main(null);
                         break;
                     case(5):
+                    
+                        if (!p5ThreadStarted){
+                            new BusinessProcessesManager().new handleP5Thread().start();
+                        }else{
+                            threadChat.add("terminate");
+                        }
                         break;
                     case(6):
                         System.out.println("\nBye, see ya soon!");
@@ -55,11 +69,30 @@ public class BusinessProcessesManager {
                 }
             }
 
+            //close scanner
+            sc.close();
             //Close DB Connection
             ct.closeConnection();
 		}
 		catch(Exception e){ 
 			System.out.println(e);
 		}
+    }
+
+
+    public class handleP5Thread extends Thread {
+
+        public void run(){
+            Process5 p5 = new Process5();
+            p5.main(null);
+
+            while(true){
+                //wait for main program to send a message to terminate the thread
+                threadChat.take();
+
+                //close thread in Process5
+                p5.stop();
+            }
+        }
     }
 }
