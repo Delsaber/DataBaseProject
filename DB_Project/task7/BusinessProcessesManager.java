@@ -4,11 +4,12 @@ import java.sql.Statement;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class BusinessProcessesManager {
+public class BusinessProcessesManager{
 
-    public static Scanner sc                            = new Scanner(System.in);
-    public static LinkedBlockingQueue<String> threadChat      = new LinkedBlockingQueue<>();
-
+    public static Scanner sc                                = new Scanner(System.in);
+    public static LinkedBlockingQueue<String> threadChat    = new LinkedBlockingQueue<>();
+    public static Thread t;
+    public static Process5 p5 = new Process5();
     public static void main(String[] args){
 
         try{ 
@@ -52,16 +53,17 @@ public class BusinessProcessesManager {
                         new Process4().main(null);
                         break;
                     case(5):
-                    
-                        if (!p5ThreadStarted){
-                            new BusinessProcessesManager().new handleP5Thread().start();
+                        if (t == null){
+                            t = new Thread(new BusinessProcessesManager().new handleP5Thread());
+                            t.start();
                         }else{
-                            threadChat.add("terminate");
+                            p5.threadStopSignal.put(1);
                         }
                         break;
                     case(6):
                         System.out.println("\nBye, see ya soon!");
                         quit = true;
+                        p5.threadStopSignal.put(1);
                         break;
                     default:
                         System.out.println("-----------------------------------------------------------------------");
@@ -80,19 +82,11 @@ public class BusinessProcessesManager {
     }
 
 
-    public class handleP5Thread extends Thread {
+    public class handleP5Thread implements Runnable {
 
         public void run(){
-            Process5 p5 = new Process5();
+
             p5.main(null);
-
-            while(true){
-                //wait for main program to send a message to terminate the thread
-                threadChat.take();
-
-                //close thread in Process5
-                p5.stop();
-            }
         }
     }
 }

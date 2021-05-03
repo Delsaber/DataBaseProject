@@ -4,9 +4,15 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.LinkedBlockingQueue;
+
 
 public class Process5{
-public static void main(String args[]) {
+
+	public static boolean quit = false;
+	public static LinkedBlockingQueue<Integer> threadStopSignal    = new LinkedBlockingQueue<>();
+	public static void main(String args[]) {
 		ArrayList<String> GV_ids = new ArrayList<String>();
 		ArrayList<String> LDG_ids = new ArrayList<String>();
 		ArrayList<Integer> AZ_ids = new ArrayList<Integer>();
@@ -14,19 +20,28 @@ public static void main(String args[]) {
 		
 		int i;
 		PreparedStatement ps;
-		
-		//Connect to Database
-        ConnectToDBGV gv = new ConnectToDBGV();
-        ConnectToDBAZ az = new ConnectToDBAZ();
-        ConnectToDBLD ld = new ConnectToDBLD();
-        
-        //Get DBs Connections
-        Connection connGV = gv.getConn();
-        Connection connAZ = az.getConn();
-		Connection connLD = ld.getConn();
-		
-		while(true) {
-			try{	
+
+		new Thread(){
+
+			public void run(){
+				
+				try{
+					threadStopSignal.take();
+					new Process5().stopThread();
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+		}.start();
+
+		while(!quit) {
+			try{
+
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				Connection connGV = DriverManager.getConnection("jdbc:oracle:thin:@dbsvcs.cs.uno.edu:1521:orcl", "rjgaray", "VrHX7Ngg");
+				Connection connAZ = DriverManager.getConnection("jdbc:oracle:thin:@dbsvcs.cs.uno.edu:1521:orcl", "lgcencir", "grdKCMd4");
+				Connection connLD = DriverManager.getConnection("jdbc:oracle:thin:@dbsvcs.cs.uno.edu:1521:orcl", "ttngu105", "PmP3X4pN");
+
 				//Initialize states of everything at beginning of update.
 				String sql = "SELECT GV_WorkerID FROM Worker_GV";
 				ps = connLD.prepareStatement(sql);
@@ -36,6 +51,7 @@ public static void main(String args[]) {
 				{
 					LDG_ids.add(resultLDG.getString(1));
 				}
+				ps.close();
 				
 				sql = "SELECT AZ_EmployeeID FROM Employee_AZ";
 				ps = connLD.prepareStatement(sql);
@@ -46,6 +62,7 @@ public static void main(String args[]) {
 					LDA_ids.add(resultLDA.getInt(1));
 					
 				}
+				ps.close();
 				
 				sql = "SELECT E_EmployeeID FROM Employee";
 				ps = connAZ.prepareStatement(sql);
@@ -56,6 +73,7 @@ public static void main(String args[]) {
 					AZ_ids.add(resultAZOriginal.getInt(1));
 					
 				}
+				ps.close();
 				
 				sql = "SELECT WorkerID FROM WORKER";
 				ps = connGV.prepareStatement(sql);
@@ -66,7 +84,8 @@ public static void main(String args[]) {
 					GV_ids.add(resultGVOriginal.getString(1));
 				
 				}
-				
+				ps.close();
+
 				ResultSet resultGV;
 				ResultSet resultAZ;
 				ResultSet resultLD;
@@ -86,24 +105,31 @@ public static void main(String args[]) {
 						sql = "INSERT INTO Worker_GV VALUES(?, ?, ?)";
 						ps = connLD.prepareStatement(sql);
 						
+						
 						while(resultGV.next()) 
 						{
 							ps.setString(1, resultGV.getString(1));
 							ps.setString(2, resultGV.getString(2));
 							ps.setString(3, resultGV.getString(3));
 						}	
+
 						ps.executeQuery();
+						ps.close();
 						//--------------------------------------------------------------------
 					} else {
+
+						PreparedStatement resultGVps;
+						PreparedStatement resultLDps;
+
 						sql = "SELECT * from Worker WHERE WorkerID = ?";
-						ps = connGV.prepareStatement(sql);
-						ps.setString(1, GV_ids.get(i));
-						resultGV = ps.executeQuery();
+						resultGVps = connGV.prepareStatement(sql);
+						resultGVps.setString(1, GV_ids.get(i));
+						resultGV = resultGVps.executeQuery();
 						
 						sql = "SELECT * from Worker_GV WHERE GV_WorkerID = ?";
-						ps = connLD.prepareStatement(sql);
-						ps.setString(1, GV_ids.get(i));
-						resultLD = ps.executeQuery();
+						resultLDps = connLD.prepareStatement(sql);
+						resultLDps.setString(1, GV_ids.get(i));
+						resultLD = resultLDps.executeQuery();
 						
 						if(!(resultGV==resultLD)) 
 						{
@@ -112,6 +138,7 @@ public static void main(String args[]) {
 							ps = connLD.prepareStatement(sql);
 							ps.setString(1, GV_ids.get(i));
 							ps.executeQuery();
+							ps.close();
 							//--------------------------------------------------------------------
 							
 							//The inserts that were done since the last update---------------------						
@@ -125,8 +152,12 @@ public static void main(String args[]) {
 								ps.setString(3, resultGV.getString(3));
 							}	
 							ps.executeQuery();
+							ps.close();
 							//--------------------------------------------------------------------
 						}
+
+						resultGVps.close();
+						resultLDps.close();
 					}
 				}	
 				
@@ -140,6 +171,7 @@ public static void main(String args[]) {
 						ps = connLD.prepareStatement(sql);
 						ps.setString(1, GV_ids.get(i));
 						ps.executeQuery();
+						ps.close();
 						//--------------------------------------------------------------------
 					}
 				}	
@@ -149,12 +181,14 @@ public static void main(String args[]) {
 				for(i = 0; i < (AZ_ids.size()); i++ ) 
 				{
 					if(!LDA_ids.contains(AZ_ids.get(i)))
-					{
+					{	
+						PreparedStatement psResultAZ;
+
 						//The inserts that were done since the last update---------------------				
 						sql = "SELECT * from Employee WHERE E_EmployeeID = ?";
-						ps = connAZ.prepareStatement(sql);
-						ps.setInt(1, AZ_ids.get(i));
-						resultAZ = ps.executeQuery();
+						psResultAZ = connAZ.prepareStatement(sql);
+						psResultAZ.setInt(1, AZ_ids.get(i));
+						resultAZ = psResultAZ.executeQuery();
 						
 						sql = "INSERT INTO Employee_AZ VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 						ps = connLD.prepareStatement(sql);
@@ -173,18 +207,24 @@ public static void main(String args[]) {
 							ps.setString(10, resultAZ.getString(10));
 							ps.setString(11, resultAZ.getString(11));
 							ps.executeQuery();
+							ps.close();
 						}
+
+						psResultAZ.close();
 						//--------------------------------------------------------------------
 					} else {
+						PreparedStatement resultAZPs;
+						PreparedStatement resultLDPs;
+
 						sql = "SELECT * from Employee WHERE E_EmployeeID = ?";
-						ps = connAZ.prepareStatement(sql);
-						ps.setInt(1, AZ_ids.get(i));
-						resultAZ = ps.executeQuery();
+						resultAZPs = connAZ.prepareStatement(sql);
+						resultAZPs.setInt(1, AZ_ids.get(i));
+						resultAZ = resultAZPs.executeQuery();
 						
 						sql = "SELECT * from Employee_AZ WHERE AZ_EmployeeID = ?";
-						ps = connLD.prepareStatement(sql);
-						ps.setInt(1, AZ_ids.get(i));
-						resultLD = ps.executeQuery();
+						resultLDPs = connLD.prepareStatement(sql);
+						resultLDPs.setInt(1, AZ_ids.get(i));
+						resultLD = resultLDPs.executeQuery();
 						
 						if(!(resultAZ == resultLD)) 
 						{
@@ -193,6 +233,8 @@ public static void main(String args[]) {
 							ps = connLD.prepareStatement(sql);
 							ps.setInt(1, AZ_ids.get(i));
 							ps.executeQuery();
+							ps.close();
+
 							//--------------------------------------------------------------------
 							
 							//The inserts that were done since the last update---------------------										
@@ -214,6 +256,9 @@ public static void main(String args[]) {
 								ps.setString(11, resultAZ.getString(11));
 								ps.executeQuery();
 							}
+							ps.close();
+							resultAZPs.close();
+							resultLDPs.close();
 							//--------------------------------------------------------------------
 						}
 					}
@@ -229,19 +274,38 @@ public static void main(String args[]) {
 						ps = connLD.prepareStatement(sql);
 						ps.setInt(1, AZ_ids.get(i));
 						ps.executeQuery();
+						ps.close();
 						//--------------------------------------------------------------------
 					}
-				}	
+				}
+
 				//Step 6 Close the Database Connection
 				connGV.close();
 				connAZ.close();
 				connLD.close();
+				ps.close();
+
+				TimeUnit.SECONDS.sleep(3);
 			} 
 			catch(Exception e){
-				System.out.println(e);
+				e.printStackTrace();
 			}
-			
 		}
+
+		System.out.println("Process 5 finished!");
+
+		// try{
+		// 	//Step 6 Close the Database Connection
+		// 	connGV.close();
+		// 	connAZ.close();
+		// 	connLD.close();
+		// }catch(Exception e){
+		// 	e.printStackTrace();
+		// }
 		//System.out.println("Process5 Ending.");
 	}	
+
+	public void stopThread(){
+		quit = true;
+	}
 }
