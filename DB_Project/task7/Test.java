@@ -9,7 +9,12 @@ public class Process4 {
 
         //Connect to Databse
         ConnectToDBGV gv = new ConnectToDBGV();
+<<<<<<< HEAD:DB_Project/task7/Test.java
+        ConnectToDBLD ld = new ConnectToDBLD();
+
+=======
         ConnectToDBAZ az = new ConnectToDBAZ();
+>>>>>>> 78d7c30c127052a8ef5886a35d592f1fb3e3561b:DB_Project/task7/Process4.java
 
         //Get DBs Connections
         Connection connGv = gv.getConn();
