@@ -9,7 +9,7 @@ public class ConnectToDBGV {
     
     public ConnectToDBGV(){
 
-        this.DB_name = "GB DataBase";
+        this.DB_name = "GV DataBase";
 
         try{
             System.out.printf("Connecting to %s...\n\n", DB_name);
