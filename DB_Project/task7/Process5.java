@@ -12,15 +12,39 @@ public class Process5{
 
 	public static boolean quit = false;
 	public static LinkedBlockingQueue<Integer> threadStopSignal    = new LinkedBlockingQueue<>();
+	
 	public static void main(String args[]) {
 		ArrayList<String> GV_ids = new ArrayList<String>();
 		ArrayList<String> LDG_ids = new ArrayList<String>();
 		ArrayList<Integer> AZ_ids = new ArrayList<Integer>();
 		ArrayList<Integer> LDA_ids = new ArrayList<Integer>();
 		
-		int i;
+		Object objLD = null;
+		Object objAZ = null;
+		Object objGV = null;
+		
+		int i, col;
+		
+		ResultSet resultLDG;
+		ResultSet resultLDA;
+		ResultSet resultAZOriginal;
+		ResultSet resultGVOriginal;
 		PreparedStatement ps;
-
+		PreparedStatement resultGVps;
+		PreparedStatement resultLDps;
+		PreparedStatement resultHolderps;
+		PreparedStatement psResultAZ;
+		ResultSet resultGV;
+		ResultSet resultAZ;
+		ResultSet resultLD;
+		ResultSet resultHolder;	
+		PreparedStatement resultAZPs;
+		PreparedStatement resultLDPs;
+		
+		Connection connGV;
+		Connection connAZ;
+		Connection connLD;
+		
 		new Thread(){
 
 			public void run(){
@@ -38,14 +62,14 @@ public class Process5{
 			try{
 
 				Class.forName("oracle.jdbc.driver.OracleDriver");
-				Connection connGV = DriverManager.getConnection("jdbc:oracle:thin:@dbsvcs.cs.uno.edu:1521:orcl", "rjgaray", "VrHX7Ngg");
-				Connection connAZ = DriverManager.getConnection("jdbc:oracle:thin:@dbsvcs.cs.uno.edu:1521:orcl", "lgcencir", "grdKCMd4");
-				Connection connLD = DriverManager.getConnection("jdbc:oracle:thin:@dbsvcs.cs.uno.edu:1521:orcl", "ttngu105", "PmP3X4pN");
+				connGV = DriverManager.getConnection("jdbc:oracle:thin:@dbsvcs.cs.uno.edu:1521:orcl", "rjgaray", "VrHX7Ngg");
+				connAZ = DriverManager.getConnection("jdbc:oracle:thin:@dbsvcs.cs.uno.edu:1521:orcl", "lgcencir", "grdKCMd4");
+				connLD = DriverManager.getConnection("jdbc:oracle:thin:@dbsvcs.cs.uno.edu:1521:orcl", "ttngu105", "PmP3X4pN");
 
 				//Initialize states of everything at beginning of update.
 				String sql = "SELECT GV_WorkerID FROM Worker_GV";
 				ps = connLD.prepareStatement(sql);
-				ResultSet resultLDG = ps.executeQuery();
+				resultLDG = ps.executeQuery();
 				
 				while(resultLDG.next())
 				{
@@ -55,7 +79,7 @@ public class Process5{
 				
 				sql = "SELECT AZ_EmployeeID FROM Employee_AZ";
 				ps = connLD.prepareStatement(sql);
-				ResultSet resultLDA = ps.executeQuery();
+				resultLDA = ps.executeQuery();
 				
 				while(resultLDA.next())
 				{
@@ -66,7 +90,7 @@ public class Process5{
 				
 				sql = "SELECT E_EmployeeID FROM Employee";
 				ps = connAZ.prepareStatement(sql);
-				ResultSet resultAZOriginal = ps.executeQuery();
+				resultAZOriginal = ps.executeQuery();
 				
 				while(resultAZOriginal.next())
 				{
@@ -77,19 +101,14 @@ public class Process5{
 				
 				sql = "SELECT WorkerID FROM WORKER";
 				ps = connGV.prepareStatement(sql);
-				ResultSet resultGVOriginal = ps.executeQuery();
+				resultGVOriginal = ps.executeQuery();
 				
 				while(resultGVOriginal.next())
 				{
 					GV_ids.add(resultGVOriginal.getString(1));
 				
 				}
-				ps.close();
-
-				ResultSet resultGV;
-				ResultSet resultAZ;
-				ResultSet resultLD;
-							
+				ps.close();	
 				
 				//All instances of GV_ids not found in LDG_ids 
 				for(i = 0; i < (GV_ids.size()); i++ ) 
@@ -118,58 +137,73 @@ public class Process5{
 						//--------------------------------------------------------------------
 					} else {
 
-						PreparedStatement resultGVps;
-						PreparedStatement resultLDps;
-
+						
+						
 						sql = "SELECT * from Worker WHERE WorkerID = ?";
 						resultGVps = connGV.prepareStatement(sql);
 						resultGVps.setString(1, GV_ids.get(i));
 						resultGV = resultGVps.executeQuery();
+						
+						resultHolderps = connGV.prepareStatement(sql);
+						resultHolderps.setString(1, GV_ids.get(i));
+						resultHolder = resultHolderps.executeQuery();
 						
 						sql = "SELECT * from Worker_GV WHERE GV_WorkerID = ?";
 						resultLDps = connLD.prepareStatement(sql);
 						resultLDps.setString(1, GV_ids.get(i));
 						resultLD = resultLDps.executeQuery();
 						
-						if(!(resultGV==resultLD)) 
-						{
-							//The deletes that were done since the last update---------------------
-							sql = "DELETE FROM Worker_GV WHERE GV_WorkerID = ?";
-							ps = connLD.prepareStatement(sql);
-							ps.setString(1, GV_ids.get(i));
-							ps.executeQuery();
-							ps.close();
-							//--------------------------------------------------------------------
-							
-							//The inserts that were done since the last update---------------------						
-							sql = "INSERT INTO Worker_GV VALUES(?, ?, ?)";
-							ps = connLD.prepareStatement(sql);
-							
-							while(resultGV.next()) 
-							{
-								ps.setString(1, resultGV.getString(1));
-								ps.setString(2, resultGV.getString(2));
-								ps.setString(3, resultGV.getString(3));
-							}	
-							ps.executeQuery();
-							ps.close();
-							//--------------------------------------------------------------------
-						}
+						
+						 
+						    while (resultGV.next() && resultLD.next()) {
+						    	
+						    	for(col = 1; col <= 3; col++) {
+							        objGV = resultGV.getObject(col);
+							        objLD = resultLD.getObject(col);
+							        // Check values
+							        if (!objGV.equals(objLD)) {
+							        	//The deletes that were done since the last update---------------------
+										sql = "DELETE FROM Worker_GV WHERE GV_WorkerID = ?";
+										ps = connLD.prepareStatement(sql);
+										ps.setString(1, GV_ids.get(i));
+										ps.executeQuery();
+										ps.close();
+										//--------------------------------------------------------------------
+									
+										//The inserts that were done since the last update---------------------		
+										sql = "INSERT INTO Worker_GV VALUES(?, ?, ?)";
+										ps = connLD.prepareStatement(sql);
+										
+										while(resultHolder.next()) 
+										{
+											ps.setString(1, resultHolder.getString(1));
+											ps.setString(2, resultHolder.getString(2));
+											ps.setString(3, resultHolder.getString(3));
+										}	
+										ps.executeQuery();
+										ps.close();
+										break;
+										//--------------------------------------------------------------------
+							        }
+						    	}
+						    }
 
 						resultGVps.close();
 						resultLDps.close();
+						resultHolderps.close();
 					}
 				}	
 				
 				//Handles all the deletes by finding all instances of LDG_ids not found in GV_ids
-				for(i = 0; i < (LDG_ids.size() - 1); i++ ) 
+				for(i = 0; i < (LDG_ids.size()); i++ ) 
 				{
+					
 					if(!GV_ids.contains(LDG_ids.get(i)))
 					{
 						//The deletes that were done since the last update---------------------
 						sql = "DELETE FROM Worker_GV WHERE GV_WorkerID = ?";
 						ps = connLD.prepareStatement(sql);
-						ps.setString(1, GV_ids.get(i));
+						ps.setString(1, LDG_ids.get(i));
 						ps.executeQuery();
 						ps.close();
 						//--------------------------------------------------------------------
@@ -182,7 +216,7 @@ public class Process5{
 				{
 					if(!LDA_ids.contains(AZ_ids.get(i)))
 					{	
-						PreparedStatement psResultAZ;
+						
 
 						//The inserts that were done since the last update---------------------				
 						sql = "SELECT * from Employee WHERE E_EmployeeID = ?";
@@ -213,54 +247,73 @@ public class Process5{
 						psResultAZ.close();
 						//--------------------------------------------------------------------
 					} else {
-						PreparedStatement resultAZPs;
-						PreparedStatement resultLDPs;
-
+						
 						sql = "SELECT * from Employee WHERE E_EmployeeID = ?";
 						resultAZPs = connAZ.prepareStatement(sql);
 						resultAZPs.setInt(1, AZ_ids.get(i));
 						resultAZ = resultAZPs.executeQuery();
+						
+						resultHolderps = connAZ.prepareStatement(sql);
+						resultHolderps.setInt(1, AZ_ids.get(i));
+						resultHolder = resultHolderps.executeQuery();
+						
 						
 						sql = "SELECT * from Employee_AZ WHERE AZ_EmployeeID = ?";
 						resultLDPs = connLD.prepareStatement(sql);
 						resultLDPs.setInt(1, AZ_ids.get(i));
 						resultLD = resultLDPs.executeQuery();
 						
-						if(!(resultAZ == resultLD)) 
-						{
-							//The deletes that were done since the last update---------------------
-							sql = "DELETE FROM Employee_AZ WHERE AZ_EmployeeID = ?";
-							ps = connLD.prepareStatement(sql);
-							ps.setInt(1, AZ_ids.get(i));
-							ps.executeQuery();
-							ps.close();
+						
+						while (resultAZ.next() && resultLD.next()) {
+							
+					    	for(col = 1; col <= 11; col++)
+					    	{
+					    		
+						        objAZ = resultAZ.getObject(col);
+						        objLD = resultLD.getObject(col);
+						        
+						      
+						        // Check values
+						        if (!objAZ.equals(objLD)) {
+						        	//The deletes that were done since the last update---------------------
+									sql = "DELETE FROM Employee_AZ WHERE AZ_EmployeeID = ?";
+									ps = connLD.prepareStatement(sql);
+									ps.setInt(1, AZ_ids.get(i));
+									ps.executeQuery();
+									ps.close();
 
-							//--------------------------------------------------------------------
-							
-							//The inserts that were done since the last update---------------------										
-							sql = "INSERT INTO Employee_AZ VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-							ps = connLD.prepareStatement(sql);
-							
-							while(resultAZ.next()) 
-							{
-								ps.setInt(1, resultAZ.getInt(1));
-								ps.setInt(2, resultAZ.getInt(2));
-								ps.setInt(3, resultAZ.getInt(3));
-								ps.setString(4, resultAZ.getString(4));
-								ps.setString(5, resultAZ.getString(5));
-								ps.setInt(6, resultAZ.getInt(6));
-								ps.setString(7, resultAZ.getString(7));
-								ps.setString(8, resultAZ.getString(8));
-								ps.setString(9, resultAZ.getString(9));
-								ps.setString(10, resultAZ.getString(10));
-								ps.setString(11, resultAZ.getString(11));
-								ps.executeQuery();
-							}
-							ps.close();
-							resultAZPs.close();
-							resultLDPs.close();
-							//--------------------------------------------------------------------
-						}
+									//--------------------------------------------------------------------
+									
+									//The inserts that were done since the last update---------------------										
+									sql = "INSERT INTO Employee_AZ VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+									ps = connLD.prepareStatement(sql);
+									
+									while(resultHolder.next()) 
+									{
+										ps.setInt(1, resultHolder.getInt(1));
+										ps.setInt(2, resultHolder.getInt(2));
+										ps.setInt(3, resultHolder.getInt(3));
+										ps.setString(4, resultHolder.getString(4));
+										ps.setString(5, resultHolder.getString(5));
+										ps.setInt(6, resultHolder.getInt(6));
+										ps.setString(7, resultHolder.getString(7));
+										ps.setString(8, resultHolder.getString(8));
+										ps.setString(9, resultHolder.getString(9));
+										ps.setString(10, resultHolder.getString(10));
+										ps.setString(11, resultHolder.getString(11));
+										
+									}
+									ps.executeQuery();
+									ps.close();									
+									break;
+									//--------------------------------------------------------------------
+						        }
+					    	}
+
+					    }
+						resultAZPs.close();
+						resultLDPs.close();
+						resultHolderps.close();
 					}
 				}	
 				
@@ -272,7 +325,7 @@ public class Process5{
 						//The deletes that were done since the last update---------------------
 						sql = "DELETE FROM Employee_AZ WHERE AZ_EmployeeID = ?";
 						ps = connLD.prepareStatement(sql);
-						ps.setInt(1, AZ_ids.get(i));
+						ps.setInt(1, LDA_ids.get(i));
 						ps.executeQuery();
 						ps.close();
 						//--------------------------------------------------------------------
@@ -285,11 +338,16 @@ public class Process5{
 				connLD.close();
 				ps.close();
 
+				GV_ids.clear();
+				LDG_ids.clear();
+				AZ_ids.clear();
+				LDA_ids.clear();
 				TimeUnit.SECONDS.sleep(3);
 			} 
 			catch(Exception e){
 				e.printStackTrace();
 			}
+			
 		}
 
 		System.out.println("Process 5 finished!");
