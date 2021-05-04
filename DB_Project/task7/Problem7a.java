@@ -70,9 +70,7 @@ public class Problem7a{
             System.out.println("Recomended courses are:\n---------------------------------------------------------\n");
             for(String skill: missingSkills){
             System.out.println(myguy.coruseNumFromSkill(skill)+" "+myguy.skillidToSkillname(skill));
-            }
-            input.close();
-            
+            }            
 
         }
         catch(Exception e){

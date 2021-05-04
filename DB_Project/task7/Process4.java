@@ -9,12 +9,7 @@ public class Process4 {
 
         //Connect to Databse
         ConnectToDBGV gv = new ConnectToDBGV();
-<<<<<<< HEAD:DB_Project/task7/Test.java
-        ConnectToDBLD ld = new ConnectToDBLD();
-
-=======
         ConnectToDBAZ az = new ConnectToDBAZ();
->>>>>>> 78d7c30c127052a8ef5886a35d592f1fb3e3561b:DB_Project/task7/Process4.java
 
         //Get DBs Connections
         Connection connGv = gv.getConn();
@@ -38,7 +33,7 @@ public class Process4 {
                 gvCIOId     = result.getInt(1);
                 gvCIOName   = result.getString(2);
                 System.out.println(
-                    "Current CIO in GV: " + gvCIOName
+                    "Current CIO in GV: " + gvCIOId + ", " + gvCIOName
                 );
             }
 
@@ -90,8 +85,9 @@ public class Process4 {
             ps.execute();
 
             /** GET UPDATE CIO IN THE GV DATABASE */
-            sql = "SELECT * FROM EXECUTIVES";
+            sql = "SELECT * FROM EXECUTIVES WHERE Ex_position = ?";
             ps  = connGv.prepareStatement(sql);
+            ps.setString(1, "CIO");
             result = ps.executeQuery();
 
             System.out.println("---");
@@ -102,8 +98,9 @@ public class Process4 {
             }
 
             /** GET UPDATE CIO IN THE AZ DATABASE */
-            sql = "SELECT * FROM EXECUTIVES";
+            sql = "SELECT * FROM EXECUTIVES WHERE Ex_position = ?";
             ps  = connAz.prepareStatement(sql);
+            ps.setString(1, "CIO");
             result = ps.executeQuery();
 
             while (result.next()){

@@ -6,7 +6,7 @@ public class Task6 {
         try{
 
             //Connect to Databse
-            ConnectToDB ct = new ConnectToDB();
+            ConnectToDBAZ ct = new ConnectToDBAZ();
 
             //Get Connection
             Connection conn = ct.getConn();
@@ -27,8 +27,6 @@ public class Task6 {
             * Close Prepared Statement of Customer After done with Result Set
             */
             e = new Employee(1, 3, "Luis", "Cenci", 110000, "Male", "luisgcenci@gmail.com", "Nickel Loop St", "504-499-555", "70458", conn);
-            
-            System.out.println(e.getId());
 
             result = e.getAllEmployees();
             while(result.next()){

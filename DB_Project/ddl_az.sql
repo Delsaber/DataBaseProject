@@ -8,8 +8,21 @@ DROP TABLE STORE;
 DROP TABLE SKILL_REQUIRED;
 DROP TABLE POSITION;
 DROP TABLE SKILL;
+DROP TABLE EXECUTIVES;
 
 ALTER SESSION SET NLS_DATE_FORMAT = 'MM-DD-YYYY';
+--alter session set ddl_lock_timeout = 1;
+
+CREATE TABLE EXECUTIVES(
+    Ex_id int,
+    Ex_name varchar(20),
+    Ex_position varchar(20),
+
+    PRIMARY KEY(Ex_id)
+);
+
+INSERT INTO EXECUTIVES VALUES (1, 'Charles Garay', 'CIO');
+
   
 CREATE TABLE SKILL(
     SK_SkillCode int,
@@ -155,7 +168,8 @@ CREATE TABLE EMPLOYEE(
 
 INSERT INTO EMPLOYEE VALUES (1, 1, 1, 'Luan', 'Ferrari', 80000, 'Male', 'luan@gmail.com', '99 Wood St', '504-111-111', '70222');
 INSERT INTO EMPLOYEE VALUES (2, 1, 1, 'Ashley', 'Alvarez', 90000, 'Female', 'ashley@gmail.com', '1144 Pine St', '504-111-111', '70211');
-INSERT INTO EMPLOYEE VALUES (3, 1, 1, 'Ricardo', 'Derick', 110000, 'Male', 'ricardo@gmail.com', '22 Tree St', '504-111-111', '70422');
+INSERT INTO EMPLOYEE VALUES (3, 1, 1, 'Ricardo', 'James', 110000, 'Male', 'ricardo@gmail.com', '22 Tree St', '504-111-111', '70422');
+
 INSERT INTO EMPLOYEE VALUES (4, 1, 2, 'Luis', 'Quintano', 65000, 'Male', 'luis@gmail.com', '4 Boat St', '504-111-111', '70341');
 INSERT INTO EMPLOYEE VALUES (5, 1, 2, 'Josh', 'Smith', 78500, 'Male', 'josh@gmail.com', '7722 England Ave', '504-111-111', '70112');
 INSERT INTO EMPLOYEE VALUES (6, 1, 2, 'John', 'Alzent', 105000, 'Male', 'john@gmail.com', '555 Ragnar St', '504-111-111', '70323');
@@ -219,9 +233,6 @@ INSERT INTO SALES VALUES('S012', 5, 'IT1002', TO_DATE('11/04/2018'), 5, 1400, 'T
 INSERT INTO SALES VALUES('S013', 5, 'IT1002', TO_DATE('12/15/2018'), 6, 1680, 'This is a note');
 INSERT INTO SALES VALUES('S014', 5, 'IT1004', TO_DATE('08/23/2018'), 4, 300, 'This is a note');
 INSERT INTO SALES VALUES('S015', 5, 'IT1004', TO_DATE('06/28/2018'), 3, 225, 'This is a note');
-
---DELETE FROM SALES    WHERE SA_CustomerID    = 15;
---DELETE FROM CUSTOMER WHERE C_CustomerID     = 3;
 
 
 

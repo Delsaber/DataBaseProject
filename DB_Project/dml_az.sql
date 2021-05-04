@@ -63,17 +63,22 @@ WHERE I_ItemQuantity < I_MinLevel;
 
 --18. Find out the job distribution among industries by showing the number of employees in each
 --industry.
+
+--CREATE TABLE works
+--(
+--	perid number(3),
+--	werkid number(3),
+--	constraint personfk1 FOREIGN KEY (perid)
+-- 	References person(personid)
+--);
+    
 SELECT DISTINCT COMPANY.gid, COUNT(DISTINCT PERSON.Personid)
 FROM PERSON, WORKS, POSITION, JOBS, COMPANY
 WHERE 
     PERSON.Personid = WORKS.perid AND 
-    WORKS.werkid = POSITION.pid AND 
-    POSITION.pid = JOBS.posid AND
-    JOBS.companyid = COMPANY.cid 
+    WORKS.werkid    = POSITION.pid AND 
+    POSITION.pid    = JOBS.posid AND
+    JOBS.companyid  = COMPANY.cid 
 GROUP BY COMPANY.gid
 ORDER BY COMPANY.gid ASC;
-
-
-
-
 

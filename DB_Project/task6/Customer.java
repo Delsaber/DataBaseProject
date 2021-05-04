@@ -95,17 +95,16 @@ public class Customer {
     public void deleteFromDB(){
         try{
 
-            String sql = "DELETE FROM SALES WHERE SA_CustomerID    = ?";
+            String sql = "DELETE FROM SALES WHERE SA_CustomerID = ?";
             this.ps = this.conn.prepareStatement(sql);
             this.ps.setInt(1, this.id);
-
             this.ps.execute();
-            
+            this.ps.close();
+
             sql = "DELETE FROM CUSTOMER WHERE C_CustomerID = ?";
             this.ps = this.conn.prepareStatement(sql);
             this.ps.setInt(1, this.id);
             this.ps.execute();
-
             this.ps.close();
 
             System.out.println("\n***Customer Deleted\n");
@@ -122,6 +121,8 @@ public class Customer {
             this.ps = this.conn.prepareStatement(sql);
             this.ps.setInt(1, id);
             this.ps.execute();
+            this.ps.close();
+
             sql = "DELETE FROM CUSTOMER WHERE C_CustomerID = ?";
             this.ps = this.conn.prepareStatement(sql);
             this.ps.setInt(1, id);

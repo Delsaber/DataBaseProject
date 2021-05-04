@@ -1,6 +1,6 @@
-public class Task7 {
+public class Process1 {
 
-        public static void main(String[] args){
+    public static void main(String[] args){
         Problem7a sevena = new Problem7a();
         try{
         sevena.run();
@@ -8,7 +8,7 @@ public class Task7 {
         catch(Exception e){
             System.out.println(e);
         }
-        }
+    }
         
 
 }

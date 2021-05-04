@@ -14,12 +14,6 @@ public class BusinessProcessesManager{
 
         try{ 
 
-            //Connect to Databse
-            ConnectToDBAZ ct                = new ConnectToDBAZ();
-
-            //Get Connection
-            Connection conn                 = ct.getConn();
-
             //loop control
             int optionChosen                = 0;
             boolean quit                    = false;
@@ -36,12 +30,13 @@ public class BusinessProcessesManager{
                 System.out.println("4 - Company AZ and company GV exchange their CIOs");
                 System.out.println("5 - LD collects job information from AZ and GV");
                 System.out.println("6 - Quit Program\n");
-                System.out.print("Enter an option: ");
+                System.out.print  ("Enter an option: ");
                 optionChosen = sc.nextInt();
 
                 switch(optionChosen){
     
                     case(1):
+                        new Process1().main(null);
                         break;
                     case(2):
                         new Process2().main(null);
@@ -73,8 +68,6 @@ public class BusinessProcessesManager{
 
             //close scanner
             sc.close();
-            //Close DB Connection
-            ct.closeConnection();
 		}
 		catch(Exception e){ 
 			System.out.println(e);
